@@ -147,10 +147,20 @@ console.log(getLunarDateStr(Today))
 console.log(Today.getFullYear(), (Today.getMonth() + 1), Today.getDate());
 let year = document.querySelector('#year');
 year.textContent = Today.getFullYear() + '年';
-let showSolar = document.querySelector('#solar');
-showSolar.textContent = `${(Today.getMonth() + 1)} 月 ${Today.getDate()} 日`;
+
+// solar
+let solarMonth = document.getElementById('month');
+solarMonth.textContent = `${(Today.getMonth() + 1)} 月`;
+let solarDate = document.getElementById('date');
+solarDate.textContent = Today.getDate();
+
+// lunar
 let showLunar = document.querySelector('#lunar');
 showLunar.textContent = getLunarDateStr(Today)
+
 let day = document.querySelector('#day');
 day.textContent = '星期' + changeDay(Today.getDay())
-console.log(Today.getDay())
+if (Today.getDay() === 6 || Today.getDay() === 0) {
+    day.style.color = '#ff0000';
+    solarDate.style.color = 'red';
+}
