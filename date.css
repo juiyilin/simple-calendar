@@ -27,7 +27,8 @@
     margin: 20px auto;
 }
 
-#lunar,
-#day {
+#contain>h2,
+#day,
+p {
     text-align: center;
 }

@@ -33,25 +33,25 @@ let lunarInfo = new Array(
 
 //====================================== 傳回農曆 y年的總天數
 function lYearDays(y) {
-    let i, sum = 348
-    for (i = 0x8000; i > 0x8; i >>= 1) sum += (lunarInfo[y - 1900] & i) ? 1 : 0
-    return (sum + leapDays(y))
+    let i, sum = 348;
+    for (i = 0x8000; i > 0x8; i >>= 1) sum += (lunarInfo[y - 1900] & i) ? 1 : 0;
+    return (sum + leapDays(y));
 }
 
 //====================================== 傳回農曆 y年閏月的天數
 function leapDays(y) {
-    if (leapMonth(y)) return ((lunarInfo[y - 1900] & 0x10000) ? 30 : 29)
-    else return (0)
+    if (leapMonth(y)) return ((lunarInfo[y - 1900] & 0x10000) ? 30 : 29);
+    else return (0);
 }
 
 //====================================== 傳回農曆 y年閏哪個月 1-12 , 沒閏傳回 0
 function leapMonth(y) {
-    return (lunarInfo[y - 1900] & 0xf)
+    return (lunarInfo[y - 1900] & 0xf);
 }
 
 //====================================== 傳回農曆 y年m月的總天數
 function monthDays(y, m) {
-    return ((lunarInfo[y - 1900] & (0x10000 >> m)) ? 30 : 29)
+    return ((lunarInfo[y - 1900] & (0x10000 >> m)) ? 30 : 29);
 }
 
 //====================================== 算出農曆, 傳入日期物件, 傳回農曆日期物件
@@ -59,30 +59,30 @@ function monthDays(y, m) {
 function Lunar(objDate) {
 
     let i, leap = 0,
-        temp = 0
-    let baseDate = new Date(1900, 0, 31)
-    let offset = (objDate - baseDate) / 86400000
+        temp = 0;
+    let baseDate = new Date(1900, 0, 31);
+    let offset = (objDate - baseDate) / 86400000;
 
-    this.dayCyl = offset + 40
-    this.monCyl = 14
+    this.dayCyl = offset + 40;
+    this.monCyl = 14;
 
     for (i = 1900; i < 2050 && offset > 0; i++) {
-        temp = lYearDays(i)
-        offset -= temp
-        this.monCyl += 12
+        temp = lYearDays(i);
+        offset -= temp;
+        this.monCyl += 12;
     }
 
     if (offset < 0) {
         offset += temp;
         i--;
-        this.monCyl -= 12
+        this.monCyl -= 12;
     }
 
-    this.year = i
-    this.yearCyl = i - 1864
+    this.year = i;
+    this.yearCyl = i - 1864;
 
-    leap = leapMonth(i) //閏哪個月
-    this.isLeap = false
+    leap = leapMonth(i); //閏哪個月
+    this.isLeap = false;
 
     for (i = 1; i < 13 && offset > 0; i++) {
         //閏月
@@ -95,10 +95,10 @@ function Lunar(objDate) {
         }
 
         //解除閏月
-        if (this.isLeap == true && i == (leap + 1)) this.isLeap = false
+        if (this.isLeap == true && i == (leap + 1)) this.isLeap = false;
 
-        offset -= temp
-        if (this.isLeap == false) this.monCyl++
+        offset -= temp;
+        if (this.isLeap == false) this.monCyl++;
     }
 
     if (offset == 0 && leap > 0 && i == leap + 1)
@@ -117,8 +117,8 @@ function Lunar(objDate) {
         --this.monCyl;
     }
 
-    this.month = i
-    this.day = offset + 1
+    this.month = i;
+    this.day = offset + 1;
 }
 let numString = "十一二三四五六七八九十";
 let lMString = "正二三四五六七八九十冬臘";
@@ -131,36 +131,52 @@ function getLunarDateStr(date) {
     let lM = l.month.toFixed(0);
     let pre = (l.isLeap) ? '閏' : '';
     let mStr = pre + lMString[lM - 1] + ' 月 ';
-    let lD = l.day.toFixed(0) - 1;
+    // let lD = l.day.toFixed(0) - 1;
+    let lD = l.day.toFixed(0);
+
     pre = (lD <= 10) ? '初' : ((lD <= 19) ? '十' : ((lD <= 29) ? '廿' : '三'));
     let dStr = pre + numString[lD % 10];
     return mStr + dStr + ' 日 ';
 }
 
 function changeDay(day) {
-    let dayWord = '日一二三四五六'
-    return dayWord.slice(day)
+    let dayWord = '日一二三四五六';
+    return dayWord.slice(day, day + 1);
 }
 
-let Today = new Date();
-console.log(getLunarDateStr(Today))
-console.log(Today.getFullYear(), (Today.getMonth() + 1), Today.getDate());
-let year = document.querySelector('#year');
-year.textContent = Today.getFullYear() + '年';
+function refresh() {
 
-// solar
-let solarMonth = document.getElementById('month');
-solarMonth.textContent = `${(Today.getMonth() + 1)} 月`;
-let solarDate = document.getElementById('date');
-solarDate.textContent = Today.getDate();
+    let Today = new Date();
+    // console.log(getLunarDateStr(Today));
+    // console.log(Today.getFullYear(), (Today.getMonth() + 1), Today.getDate(), Today.getSeconds());
+    // console.log(Today)
+    let year = document.querySelector('#year');
+    year.textContent = Today.getFullYear() + '年';
 
-// lunar
-let showLunar = document.querySelector('#lunar');
-showLunar.textContent = getLunarDateStr(Today)
+    // solar
+    let solarMonth = document.getElementById('month');
+    solarMonth.textContent = `${(Today.getMonth() + 1)} 月`;
+    let solarDate = document.getElementById('date');
+    solarDate.textContent = Today.getDate();
 
-let day = document.querySelector('#day');
-day.textContent = '星期' + changeDay(Today.getDay())
-if (Today.getDay() === 6 || Today.getDay() === 0) {
-    day.style.color = '#ff0000';
-    solarDate.style.color = 'red';
+    // lunar
+    let showLunar = document.querySelector('#lunar');
+    showLunar.textContent = getLunarDateStr(Today);
+
+    let day = document.querySelector('#day');
+    day.textContent = '星期' + changeDay(Today.getDay());
+    if (Today.getDay() === 6 || Today.getDay() === 0) {
+        day.style.color = '#ff0000';
+        solarDate.style.color = 'red';
+    }
+
+    let time = document.getElementById('time');
+    if (Today.getSeconds() < 10) {
+        time.textContent = Today.getHours() + ':' + Today.getMinutes() + ':0' + Today.getSeconds();
+
+    } else {
+        time.textContent = Today.getHours() + ':' + Today.getMinutes() + ':' + Today.getSeconds();
+    }
 }
+
+setInterval(() => refresh(), 1000);
