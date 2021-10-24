@@ -132,7 +132,8 @@ function getLunarDateStr(date) {
     let pre = (l.isLeap) ? '閏' : '';
     let mStr = pre + lMString[lM - 1] + ' 月 ';
     // let lD = l.day.toFixed(0) - 1;
-    let lD = l.day.toFixed(0);
+    let lD = Math.floor(l.day);
+
 
     pre = (lD <= 10) ? '初' : ((lD <= 19) ? '十' : ((lD <= 29) ? '廿' : '三'));
     let dStr = pre + numString[lD % 10];
@@ -171,12 +172,21 @@ function refresh() {
     }
 
     let time = document.getElementById('time');
-    if (Today.getSeconds() < 10) {
-        time.textContent = Today.getHours() + ':' + Today.getMinutes() + ':0' + Today.getSeconds();
-
+    let hour = Today.getHours();
+    let minute = Today.getMinutes();
+    let second = Today.getSeconds();
+    if (hour < 13) {
+        hour = `上午 ${hour}`;
     } else {
-        time.textContent = Today.getHours() + ':' + Today.getMinutes() + ':' + Today.getSeconds();
+        hour = `下午 ${hour-12}`;
     }
+    if (minute < 10) {
+        minute = `0${minute}`;
+    }
+    if (second < 10) {
+        second = `0${second}`;
+    }
+    time.textContent = `${hour} : ${minute} : ${second}`;
 }
 
 setInterval(() => refresh(), 1000);
